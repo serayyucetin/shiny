@@ -1,0 +1,12 @@
+scanpy
+anndata
+scipy
+pandas
+numpy
+os
+sys
+matplotlib
+matplotlib.pyplot
+seaborn
+sklearn.decomposition
+umapcodes.py
