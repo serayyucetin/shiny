@@ -4,14 +4,8 @@ import zipfile
 import matplotlib 
 import matplotlib.pyplot 
 import os 
-
-# check scanpy first 
-
-import scanpy #or import scanpy as sc
-
-# if you got the error, then dowloand the scanpy:
-!pip install scanpy
-
+import scanpy 
+#umap için gerekliler
 import anndata
 import scipy 
 import time
@@ -25,7 +19,7 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.rcParams['figure.dpi'] = 70
-# plt.style.use('dark_background')
+
 
 import seaborn as sns
 
@@ -37,6 +31,8 @@ from zipfile import ZipFile
 
 from shiny.types import FileInfo
 
+
+#file upload butonunun kodu 
 app_ui = ui.page_fluid(
     ui.input_file("f", "Choose h5ad File", accept=[".h5ad"], multiple=False),
     ui.input_checkbox_group(
@@ -161,7 +157,7 @@ def file_path = ''
         from shiny import App, render, ui, reactive
 import matplotlib.pyplot as plt
 
-
+#asıl kod ama app design kısmı yok.Çalışmıyor.
 
 scanpy.pl.violin(adata, ['n_genes_by_counts', 'total_counts'],jitter=0.4, multi_panel=True)
 scanpy.pp.filter_cells(adata, min_genes=200) # Remove cells with more than 200 and less than 8000 detected genes
