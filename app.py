@@ -52,11 +52,13 @@ def server(input: Inputs, output: Outputs, session: Session):
     @reactive.calc
     def parsed_file():
         file: list[FileInfo] | None = input.file1()
-        if file is None:
-            return pd.DataFrame()
-        return pd.read_h5ad(  # pyright: ignore[reportUnknownMemberType]
-            file[0]["datapath"]
-        )
+        try:
+            if file is None:
+                return pd.DataFrame()
+                return pd.read_h5ad( 
+                      file[0]["datapath"] )
+        except:
+            return f"file uploaded"
     @output
     @render.table
     def summary():
