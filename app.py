@@ -30,7 +30,7 @@ from shiny.types import FileInfo
 import umapcodes #codes needed for umap visualization importet as module
 #user interface 
 app_ui = ui.page_fluid(
-    ui.input_file("f", "Choose h5ad File", accept=[".h5ad"], multiple=False),
+    ui.input_file("file1", "Choose zip File", accept=[".zip"], multiple=False),
     ui.input_checkbox_group(
         "stats",
         "Summary Stats",
@@ -38,42 +38,29 @@ app_ui = ui.page_fluid(
         selected=["Row Count", "Column Count", "Column Names"],
     ),
     ui.output_table("summary"),
+    ui.h1("Single-Cell Data UMAPViewer in Shiny for Python"),
+    ui.output_image("final_plot")
 )
 
-#data processing component
+
 def server(input: Inputs, output: Outputs, session: Session):
-    @output     
-    @reactive.calc #repeats itself when user adds new file
+    @output
+    def unzip_file(zip_path, extract_to):
+        with zipfile.ZipFile(zip_path,'r') as zip_ref:
+            zip_ref.extractall(extract_to)    
+    @output
+    @reactive.calc
     def parsed_file():
-        file: list[FileInfo] | None = input.f()
+        file: list[FileInfo] | None = input.file1()
         if file is None:
             return pd.DataFrame()
         return pd.read_h5ad(  # pyright: ignore[reportUnknownMemberType]
-            file[0]["uploadedfile"]  
+            file[0]["datapath"]
         )
-    ploting_data = umapcodes
-@render.table #displays the output of summary() as table
-def summary():#processes the data gathered from parsed file
+    @output
+    @render.table
+    def summary():
         df = parsed_file()
 
         if df.empty:
             return pd.DataFrame()
-
-        # Get the row count, column count, and column names of the DataFrame
-        row_count = df.shape[0]
-        column_count = df.shape[1]
-        names = df.columns.tolist()
-        column_names = ", ".join(str(name) for name in names)
-
-        # Create a new DataFrame to display the information
-        info_df = pd.DataFrame(
-            {
-                "Row Count": [row_count],
-                "Column Count": [column_count],
-                "Column Names": [column_names],
-            }
-        )
-
-        # input.stats() is a list of strings; subset the columns based on the selected
-        # checkboxes
-        return info_df.loc[:, input.stats()]
